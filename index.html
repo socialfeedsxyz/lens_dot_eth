@@ -1,0 +1,1041 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,200;0,300;0,400;0,500;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;700&display=swap"
+    rel="stylesheet" />
+  <meta name="twitter:site" content="@socialfeedsxyz" />
+  <meta name="twitter:title" content="🌿 My Lens Profile" />
+  <meta name="twitter:description"
+    content="Access this Lens profile and posts via their .eth domain. Provided by socialfeeds.xyz" />
+  <meta name="twitter:creator" content="@socialfeedsxyz" />
+  <meta name="twitter:image" content="https://channelbooth-assets.s3.amazonaws.com/ens.png" />
+  <meta property="og:title" content="🌿 My Lens Profile" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://channelbooth-assets.s3.amazonaws.com/ens.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:description"
+    content="Access this Lens profile and posts via their .eth domain. Provided by socialfeeds.xyz" />
+  <meta name="twitter:image:alt" content="Visit my Lens profile from my .eth">
+
+  <title>🌿 My Lens Profile</title>
+  <style>
+    body {
+      font-family: Space Grotesk;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    img.backdrop {
+      color: #95a5a6;
+      font-size: 12px;
+      object-fit: cover;
+      height: 190px;
+      border-radius: 0.75rem 0.75rem 0px 0px;
+      width: 100%;
+      display: block;
+      left: 0;
+      padding: 0px !important;
+    }
+
+    img.backdrop:before {
+      background: #f1f1f1;
+      content: '\00A0';
+      display: block;
+      left: 0;
+      position: absolute;
+      width: 100%;
+      min-height: 190px;
+      border-radius: 0.75rem 0.75rem 0px 0px;
+    }
+
+    img:not([src]) {
+      visibility: hidden;
+    }
+
+    img.profile {
+      border: 5px solid white;
+      color: #95a5a6;
+      font-size: 12px;
+      position: relative;
+      height: 210px;
+      width: 210px;
+      border-radius: 0.75rem;
+      object-fit: cover;
+    }
+
+    img.profile:before {
+      background: #ffffff;
+      content: '\00A0';
+      display: block;
+      left: 0;
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      border-radius: 0.75rem 0.75rem 0 0;
+    }
+
+    .cap {
+      text-transform: uppercase;
+    }
+
+    .card {
+      border-radius: .75rem;
+    }
+
+    .btn-yellow {
+      background-color: #AAFE2C;
+    }
+  </style>
+</head>
+
+
+<body style="text-align: center;" class="lens-home" onload="init()">
+  <section id="profileArea">
+    <div class="row mx-3">
+      <div class="card mx-auto my-3 lens-card" style="width: 35rem;display: none;">
+        <div class="row">
+          <img class="card-img-top backdrop lens-cover" alt="...">
+        </div>
+        <div class="row" style="border-radius:0.75rem;margin-top:-10px;background-color:white;">
+          <div style="margin-top:-105px;z-index:5;">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="mdo"
+              class="rounded-circle mx-auto profile lens-picture">
+          </div>
+        </div>
+        <div class="card-body">
+          <h2 class="card-title lens-name"></h2>
+          <h6 class="lens-handle"></h6>
+          <p><span class="badge bg-light text-dark fw-normal ens-domain"></span></p>
+          <p class="card-text lens-bio"></p>
+          <p>
+            <span class="mx-1 lens-followers-parent" style="display: none;"><strong class="lens-followers">2806</strong>
+              followers</span>
+            <span class="mx-1 lens-following-parent" style="display: none;"><strong class="lens-following">42</strong>
+              following</span>
+          </p>
+          <a class="btn btn-yellow my-3 btn-follow cap" style="display:none">Follow</a>
+          <a class="btn btn-light my-3 btn-lenster cap" style="display:none">Lenster</a>
+          <a class="btn btn-light my-3 btn-twitter cap" style="display:none">🐦 Twitter</a>
+          <a class="btn btn-light my-3 btn-website cap" style="display:none">🌐 Website</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="postArea">
+    <div class="row mx-3" id="lens-posts"></div>
+
+    </div>
+  </section>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+  async function init() {
+    let domain = window.location.host
+    if (domain.endsWith('.eth.limo')) {
+      domain = domain.split('.eth.limo')[0] + '.eth'
+    } else if (domain.endsWith('.eth.link')) {
+      domain = domain.split('.eth.link')[0] + '.eth'
+    } else {
+      domain = 'vitalik.eth',
+    }
+
+    let address = await getAddress(domain)
+    let profile = await getProfile(address)
+    if (profile) {
+      showProfile(profile)
+      if (profile.id) {
+        localStorage.setItem('profileId', profile.id)
+        let publications = await getPublications(profile.id)
+        if (publications) {
+          showPublications(publications)
+        }
+      }
+    }
+  }
+
+  async function getAddress(ens) {
+    let query = `{
+      domains(first: 1, where: {name:"${ens}"}) {
+        id
+        name
+        owner {
+          id
+        }
+        labelName
+        labelhash
+      }
+    }`
+    let url = 'https://api.thegraph.com/subgraphs/name/ensdomains/ens'
+    let res = await fetchPost(url, { query: query })
+    let address = false
+
+    if (res) {
+      if (res.data) {
+        if (res.data.domains) {
+          if (Array.isArray(res.data.domains)) {
+            if (res.data.domains[0]) {
+              if (res.data.domains[0]['owner']) {
+                if (res.data.domains[0]['owner']['id']) {
+                  address = res.data.domains[0]['owner']['id']
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return address
+  }
+  async function getPublications(id, next) {
+
+    let query = `query Publications {
+  publications(request: {
+    profileId: "${id}",
+    publicationTypes: [POST, COMMENT, MIRROR],
+    limit: 10,${next ? ` cursor: \"${next}\"` : ''}
+  }) {
+    items {
+      __typename 
+      ... on Post {
+        ...PostFields
+      }
+      ... on Comment {
+        ...CommentFields
+      }
+      ... on Mirror {
+        ...MirrorFields
+      }
+    }
+    pageInfo {
+      prev
+      next
+      totalCount
+    }
+  }
+}
+
+fragment MediaFields on Media {
+  url
+  mimeType
+}
+
+fragment ProfileFields on Profile {
+  id
+  name
+  bio
+  attributes {
+     displayType
+     traitType
+     key
+     value
+  }
+  isFollowedByMe
+  isFollowing(who: null)
+  followNftAddress
+  metadata
+  isDefault
+  handle
+  picture {
+    ... on NftImage {
+      contractAddress
+      tokenId
+      uri
+      verified
+    }
+    ... on MediaSet {
+      original {
+        ...MediaFields
+      }
+    }
+  }
+  coverPicture {
+    ... on NftImage {
+      contractAddress
+      tokenId
+      uri
+      verified
+    }
+    ... on MediaSet {
+      original {
+        ...MediaFields
+      }
+    }
+  }
+  ownedBy
+  dispatcher {
+    address
+  }
+  stats {
+    totalFollowers
+    totalFollowing
+    totalPosts
+    totalComments
+    totalMirrors
+    totalPublications
+    totalCollects
+  }
+  followModule {
+    ...FollowModuleFields
+  }
+}
+
+fragment PublicationStatsFields on PublicationStats { 
+  totalAmountOfMirrors
+  totalAmountOfCollects
+  totalAmountOfComments
+  totalUpvotes
+  totalDownvotes
+}
+
+fragment MetadataOutputFields on MetadataOutput {
+  name
+  description
+  content
+  media {
+    original {
+      ...MediaFields
+    }
+  }
+  attributes {
+    displayType
+    traitType
+    value
+  }
+}
+
+fragment Erc20Fields on Erc20 {
+  name
+  symbol
+  decimals
+  address
+}
+
+fragment PostFields on Post {
+  id
+  profile {
+    ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ...ReferenceModuleFields
+  }
+  appId
+  hidden
+  reaction(request: null)
+  mirrors(by: null)
+  hasCollectedByMe
+}
+
+fragment MirrorBaseFields on Mirror {
+  id
+  profile {
+    ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ...ReferenceModuleFields
+  }
+  appId
+  hidden
+  reaction(request: null)
+  hasCollectedByMe
+}
+
+fragment MirrorFields on Mirror {
+  ...MirrorBaseFields
+  mirrorOf {
+   ... on Post {
+      ...PostFields          
+   }
+   ... on Comment {
+      ...CommentFields          
+   }
+  }
+}
+
+fragment CommentBaseFields on Comment {
+  id
+  profile {
+    ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ...ReferenceModuleFields
+  }
+  appId
+  hidden
+  reaction(request: null)
+  mirrors(by: null)
+  hasCollectedByMe
+}
+
+fragment CommentFields on Comment {
+  ...CommentBaseFields
+  mainPost {
+    ... on Post {
+      ...PostFields
+    }
+    ... on Mirror {
+      ...MirrorBaseFields
+      mirrorOf {
+        ... on Post {
+           ...PostFields          
+        }
+        ... on Comment {
+           ...CommentMirrorOfFields        
+        }
+      }
+    }
+  }
+}
+
+fragment CommentMirrorOfFields on Comment {
+  ...CommentBaseFields
+  mainPost {
+    ... on Post {
+      ...PostFields
+    }
+    ... on Mirror {
+       ...MirrorBaseFields
+    }
+  }
+}
+
+fragment FollowModuleFields on FollowModule {
+  ... on FeeFollowModuleSettings {
+    type
+    amount {
+      asset {
+        name
+        symbol
+        decimals
+        address
+      }
+      value
+    }
+    recipient
+  }
+  ... on ProfileFollowModuleSettings {
+    type
+    contractAddress
+  }
+  ... on RevertFollowModuleSettings {
+    type
+    contractAddress
+  }
+  ... on UnknownFollowModuleSettings {
+    type
+    contractAddress
+    followModuleReturnData
+  }
+}
+
+fragment CollectModuleFields on CollectModule {
+  __typename
+  ... on FreeCollectModuleSettings {
+    type
+    followerOnly
+    contractAddress
+  }
+  ... on FeeCollectModuleSettings {
+    type
+    amount {
+      asset {
+        ...Erc20Fields
+      }
+      value
+    }
+    recipient
+    referralFee
+  }
+  ... on LimitedFeeCollectModuleSettings {
+    type
+    collectLimit
+    amount {
+      asset {
+        ...Erc20Fields
+      }
+      value
+    }
+    recipient
+    referralFee
+  }
+  ... on LimitedTimedFeeCollectModuleSettings {
+    type
+    collectLimit
+    amount {
+      asset {
+        ...Erc20Fields
+      }
+      value
+    }
+    recipient
+    referralFee
+    endTimestamp
+  }
+  ... on RevertCollectModuleSettings {
+    type
+  }
+  ... on TimedFeeCollectModuleSettings {
+    type
+    amount {
+      asset {
+        ...Erc20Fields
+      }
+      value
+    }
+    recipient
+    referralFee
+    endTimestamp
+  }
+  ... on UnknownCollectModuleSettings {
+    type
+    contractAddress
+    collectModuleReturnData
+  }
+}
+
+fragment ReferenceModuleFields on ReferenceModule {
+  ... on FollowOnlyReferenceModuleSettings {
+    type
+    contractAddress
+  }
+  ... on UnknownReferenceModuleSettings {
+    type
+    contractAddress
+    referenceModuleReturnData
+  }
+  ... on DegreesOfSeparationReferenceModuleSettings {
+    type
+    contractAddress
+    commentsRestricted
+    mirrorsRestricted
+    degreesOfSeparation
+  }
+}`
+    let url = 'https://api.lens.dev'
+    let res = await fetchPost(url, { query: query })
+    let publications = false
+
+    if (res) {
+      if (res.data) {
+        if (res.data.publications) {
+          localStorage.removeItem('next')
+          publications = res.data.publications
+        }
+      }
+    }
+    return publications
+  }
+
+  function getQuery(address) {
+
+    const query1 = `query Profiles {
+          profiles(request: { ownedBy: ["${address}"], limit: 10 }) {
+            items {
+              id
+              name
+              bio
+              attributes {
+                displayType
+                traitType
+                key
+                value
+              }
+              followNftAddress
+              metadata
+              isDefault
+              picture {
+                ... on NftImage {
+                  contractAddress
+                  tokenId
+                  uri
+                  verified
+                }
+                ... on MediaSet {
+                  original {
+                    url
+                    mimeType
+                  }
+                }
+                __typename
+              }
+              handle
+              coverPicture {
+                ... on NftImage {
+                  contractAddress
+                  tokenId
+                  uri
+                  verified
+                }
+                ... on MediaSet {
+                  original {
+                    url
+                    mimeType
+                  }
+                }
+                __typename
+              }
+              ownedBy
+              dispatcher {
+                address
+                canUseRelay
+              }
+              stats {
+                totalFollowers
+                totalFollowing
+                totalPosts
+                totalComments
+                totalMirrors
+                totalPublications
+                totalCollects
+              }
+              onChainIdentity {
+                  ens {
+                      name
+                  }
+                  proofOfHumanity
+                  sybilDotOrg {
+                      verified
+                      source {
+                      twitter {
+                          handle
+                      }
+                      }
+                  }
+                  worldcoin {
+                      isHuman
+                  }
+              }
+              followModule {
+                ... on FeeFollowModuleSettings {
+                  type
+                  amount {
+                    asset {
+                      symbol
+                      name
+                      decimals
+                      address
+                    }
+                    value
+                  }
+                  recipient
+                }
+                ... on ProfileFollowModuleSettings {
+                type
+                }
+                ... on RevertFollowModuleSettings {
+                type
+                }
+              }
+            }
+            pageInfo {
+              prev
+              next
+              totalCount
+            }
+          }
+        }`
+    return { query: query1 }
+  }
+  async function getProfile(address) {
+    try {
+      const url = 'https://api.lens.dev/'
+      const data = getQuery(address)
+      const response = await fetchPost(url, data)
+      var res = false
+      if (response) {
+        if (response.data) {
+          if (response.data.profiles) {
+            if (response.data.profiles.items) {
+              res = response.data.profiles.items[0]
+            }
+          }
+          if (response.errors) {
+            console.log(response.errors)
+          }
+        }
+      }
+      return res
+    } catch (err) {
+      console.log(err.message)
+      throw err;
+    }
+
+  }
+
+  async function fetchPost(url, body) {
+    var data = false
+    try {
+      let bearer = false;
+      const response = await fetch(url, { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
+      return response.json()
+    } catch (err) {
+      console.log(err)
+      return data
+    }
+  }
+
+  function showProfile(profile) {
+    console.log(profile)
+    showClass('lens-card')
+    if (profile.handle) {
+      updateClass('lens-handle', profile.handle)
+      updateLink('btn-follow', 'https://www.lensfrens.xyz/' + profile.handle + '/follow')
+    }
+    if (profile.bio) {
+      updateClass('lens-bio', profile.bio)
+    }
+    if (profile.name) {
+      updateClass('lens-name', profile.name)
+    }
+    if (profile.picture) {
+      if (profile.picture.original) {
+        if (profile.picture.original.url) {
+          let url = ipfsUrl(profile.picture.original.url)
+          updateImage('lens-picture', url)
+        }
+      }
+    }
+    if (profile.coverPicture) {
+      if (profile.coverPicture.original) {
+        if (profile.coverPicture.original.url) {
+          let url = ipfsUrl(profile.coverPicture.original.url)
+          updateImage('lens-cover', url)
+          // applies the background image to the body element
+          // backgroundImage('lens-home', url)
+        }
+      }
+    }
+    if (profile.stats) {
+      if (profile.stats.totalFollowers) {
+        showClass('lens-followers-parent')
+        updateClass('lens-followers', profile.stats.totalFollowers)
+      }
+      if (profile.stats.totalFollowing) {
+        showClass('lens-following-parent')
+        updateClass('lens-following', profile.stats.totalFollowing)
+      }
+    }
+    if (Array.isArray(profile.attributes)) {
+      for (let i = 0; i < profile.attributes.length; i++) {
+        let a = profile.attributes[i]
+        if (a.key == 'website') {
+          updateLink('btn-website', a.value)
+        }
+        if (a.key == 'twitter') {
+          updateLink('btn-twitter', 'https://twitter.com/' + a.value)
+        }
+        if (a.key == 'app') {
+          if (a.value == 'Lenster' && profile.handle) {
+            updateLink('btn-lenster', 'https://lenster.xyz/' + a.handle)
+          }
+        }
+      }
+    }
+    if (profile.onChainIdentity) {
+      if (profile.onChainIdentity.ens) {
+        if (profile.onChainIdentity.ens.name) {
+          updateClass('ens-domain', profile.onChainIdentity.ens.name)
+        }
+      }
+    }
+  }
+  function showPublications(publications) {
+    if (publications.pageInfo) {
+      if (publications.pageInfo.next) {
+        localStorage.setItem('next', publications.pageInfo.next.replace(/\"/g, '\\"'));
+      }
+    }
+    if (publications.items) {
+      let items = publications.items
+      if (Array.isArray(items)) {
+        console.log(items)
+        for (let i = 0; i < items.length; i++) {
+          let p = items[i]
+          let parent = document.createElement('div')
+          parent.classList.add('row')
+          parent.classList.add('mx-3')
+          let card = document.createElement('div')
+          let post = false
+          card.classList.add('card')
+          card.classList.add('mx-auto')
+          card.classList.add('mb-3')
+          card.classList.add('pb-3')
+          card.style.width = '35rem'
+          card.style.padding = '0px'
+          let pr = false;
+          if (p.mirrorOf) {
+            if (p.mirrorOf.profile) {
+              pr = p.mirrorOf.profile
+            }
+          } else if (p.profile) {
+            pr = p.profile
+          }
+          if (pr) {
+            if (pr.picture) {
+              if (pr.picture.original) {
+                if (pr.picture.original.url) {
+                  let img = document.createElement(`img`)
+                  img.src = ipfsUrl(pr.picture.original.url)
+                  img.classList.add('rounded-circle')
+                  img.classList.add('mx-auto')
+                  img.classList.add('mt-3')
+                  img.style.width = "60px"
+                  img.style.height = "60px"
+                  card.append(img)
+                }
+              }
+            }
+            if (pr.name) {
+              let strong = document.createElement('strong')
+              strong.innerText = pr.name
+              card.append(strong)
+            }
+            if (pr.handle) {
+              let span = document.createElement('span')
+              span.innerText = pr.handle
+              card.append(span)
+            }
+          }
+          if (p.mirrorOf && p.profile) {
+            if (p.mirrorOf.profile && p.profile.handle) {
+              let pa = document.createElement('p')
+              let span = document.createElement('span')
+              span.innerText = '🔁'
+              let small = document.createElement('small')
+              small.innerText = `(Mirrored by ${p.profile.handle})`
+              // pa.append(span)
+              pa.append(small)
+              card.append(pa)
+            }
+          }
+
+          if (p.metadata) {
+            if (p.metadata.content) {
+              let hr = document.createElement('hr')
+              let pa = document.createElement('p')
+              pa.classList.add('mx-2')
+              pa.classList.add('mt-3')
+              pa.innerText = p.metadata.content
+              card.append(hr)
+              card.append(pa)
+              post = true
+            }
+            if (Array.isArray(p.metadata.media)) {
+              for (let i = 0; i < p.metadata.media.length; i++) {
+                let m = p.metadata.media[i]
+                if (m.original) {
+
+                  if (m.original.url) {
+                    if (m.original.mimeType == "image/jpeg" || m.original.mimeType == "image/gif" || m.original.mimeType == "image/png") {
+                      let img = document.createElement('img')
+                      img.src = ipfsUrl(m.original.url)
+                      img.style.width = '100%'
+                      card.append(img)
+                      post = true
+                    } else if (m.original.mimeType == "video/mp4" || m.original.mimeType == 'video/quicktime') {
+                      let video = document.createElement('video')
+                      video.src = ipfsUrl(m.original.url)
+                      video.controls = 'controls'
+                      video.type = 'video/mp4'
+                      video.style.width = '100%'
+                      card.append(video)
+                      post = true
+                    } else if (m.original.mimeType == "audio/mpeg") {
+                      let audio = document.createElement('audio')
+                      audio.controls = 'true'
+                      audio.preload = 'auto'
+                      audio.classList.add('mx-auto')
+                      audio.src = ipfsUrl(m.original.url)
+                      card.append(audio)
+                    } else {
+                      alert(m.original.mimeType)
+                    }
+                  }
+                }
+              }
+            }
+          }
+          if (p.mainPost) {
+            let hr = document.createElement('hr')
+            let small = document.createElement('small')
+            small.innerText = 'As a reply to:'
+
+            card.append(hr)
+            card.append(small)
+            let pr = p.mainPost.profile
+            if (pr) {
+              if (pr.picture) {
+                if (pr.picture.original) {
+                  if (pr.picture.original.url) {
+                    let img = document.createElement(`img`)
+                    img.src = ipfsUrl(pr.picture.original.url)
+                    img.classList.add('rounded-circle')
+                    img.classList.add('mx-auto')
+                    img.classList.add('mt-1')
+                    img.style.width = "60px"
+                    img.style.height = "60px"
+                    card.append(img)
+                  }
+                }
+              }
+              if (pr.name) {
+                let strong = document.createElement('strong')
+                strong.innerText = pr.name
+                card.append(strong)
+              }
+              if (pr.handle) {
+                let span = document.createElement('span')
+                span.innerText = pr.handle
+                card.append(span)
+              }
+            }
+            if (p.mainPost.metadata) {
+              if (p.mainPost.metadata.content) {
+                let hr = document.createElement('hr')
+                let pa = document.createElement('p')
+                pa.classList.add('mx-2')
+                pa.classList.add('mt-3')
+                pa.innerText = p.mainPost.metadata.content
+                card.append(hr)
+                card.append(pa)
+                post = true
+              }
+              if (Array.isArray(p.mainPost.metadata.media)) {
+                for (let i = 0; i < p.mainPost.metadata.media.length; i++) {
+                  let m = p.mainPost.metadata.media[i]
+                  if (m.original) {
+                    if (m.original.url) {
+                      if (m.original.mimeType == "image/jpeg" || m.original.mimeType == "image/gif" || m.original.mimeType == "image/png") {
+                        let img = document.createElement('img')
+                        img.src = ipfsUrl(m.original.url)
+                        img.style.width = '100%'
+                        card.append(img)
+                        post = true
+                      } else if (m.original.mimeType == "video/mp4" || m.original.mimeType == "video/quicktime") {
+                        let video = document.createElement('video')
+                        video.src = ipfsUrl(m.original.url)
+                        video.controls = 'controls'
+                        video.type = 'video/mp4'
+                        video.style.width = '100%'
+                        card.append(video)
+                        post = true
+                      } else if (m.original.mimeType == "audio/mpeg") {
+                        let audio = document.createElement('audio')
+                        audio.controls = 'true'
+                        audio.preload = 'auto'
+                        audio.classList.add('mx-auto')
+                        audio.src = ipfsUrl(m.original.url)
+                        card.append(audio)
+                      } else {
+                        alert(m.original.mimeType)
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          if (post) {
+            parent.append(card)
+            document.getElementById('postArea').append(parent)
+          }
+        }
+      }
+    }
+  }
+  function updateClass(selector, value) {
+    var items = document.getElementsByClassName(selector),
+      i, len;
+    for (i = 0, len = items.length; i < len; i++) {
+      items[i].innerText = value;
+    }
+  }
+  function showClass(selector) {
+    var items = document.getElementsByClassName(selector),
+      i, len;
+    for (i = 0, len = items.length; i < len; i++) {
+      items[i].style.display = ''
+    }
+  }
+  function updateLink(selector, value) {
+    var items = document.getElementsByClassName(selector),
+      i, len;
+    for (i = 0, len = items.length; i < len; i++) {
+      items[i].href = value;
+      items[i].style.display = 'block'
+      items[i].target = '_blank'
+    }
+  }
+  function updateImage(selector, value) {
+    var items = document.getElementsByClassName(selector),
+      i, len;
+    for (i = 0, len = items.length; i < len; i++) {
+      items[i].src = value;
+    }
+  }
+  function backgroundImage(selector, value) {
+    var items = document.getElementsByClassName(selector),
+      i, len;
+    for (i = 0, len = items.length; i < len; i++) {
+      items[i].style.backgroundImage = 'url(' + value + ')'
+      // items[i].style.opacity = '0.9'
+    }
+  }
+  function ipfsUrl(url) {
+    if (url) {
+      if (url.includes("ipfs://")) {
+        let end = url.split('//')[1]
+        // url = 'https://ipfs.io/ipfs/' + end
+        url = 'https://lens.infura-ipfs.io/ipfs/' + end
+      }
+    }
+    return url
+  }
+
+  window.onscroll = async function (ev) {
+    if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 2) {
+      let profileId = localStorage.getItem('profileId')
+      let next = localStorage.getItem('next')
+      let publications = await getPublications(profileId, next)
+      if (publications) {
+        showPublications(publications)
+      }
+    }
+  };
+
+</script>
