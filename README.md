@@ -1,6 +1,6 @@
 # Lens.eth
 You can use this repo to display your Lens profile on your .eth domain!<br />
-1. Make sure your ethereum address designated as the "controller" on Ethereum Name Service is the same as the address assocaited with your Lens profile.<br />
+1. Make sure the ethereum address designated as the "controller" on Ethereum Name Service for your .eth is the same as the address associated with your Lens profile.<br />
 2. Deploy this repo to IPFS (or use this content hash: ipfs://QmWUeAgYh2Y9R7SjpMHYAi6NKeyQZQLabmsWbtdbB82CVD )<br />
 3. Set your Ethereum Name Service "content" field to your selected IPFS content hash.<br />
 <br />
