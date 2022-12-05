@@ -9,7 +9,7 @@
   <meta name="twitter:site" content="@socialfeedsxyz" />
   <meta name="twitter:title" content="My Lens Profile" />
   <meta name="twitter:description"
-    content="Access this Lens profile and posts via their .eth domain. Provided by socialfeeds.xyz" />
+    content="Access my Lens profile and posts via my .eth domain. Provided by socialfeeds.xyz" />
   <meta name="twitter:creator" content="@socialfeedsxyz" />
   <meta name="twitter:image" content="https://channelbooth-assets.s3.amazonaws.com/ens.png" />
   <meta property="og:title" content="My Lens Profile" />
@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://channelbooth-assets.s3.amazonaws.com/ens.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:description"
-    content="Access this Lens profile and posts via their .eth domain. Provided by socialfeeds.xyz" />
+    content="Access my Lens profile and posts via my .eth domain. Provided by socialfeeds.xyz" />
   <meta name="twitter:image:alt" content="Visit my Lens profile from my .eth">
 
   <title>My Lens Profile</title>
@@ -769,7 +769,7 @@ fragment ReferenceModuleFields on ReferenceModule {
         }
         if (a.key == 'app') {
           if (a.value == 'Lenster' && profile.handle) {
-            updateLink('btn-lenster', 'https://lenster.xyz/' + a.handle)
+            updateLink('btn-lenster', 'https://lenster.xyz/u/' + profile.handle)
           }
         }
       }
@@ -867,7 +867,6 @@ fragment ReferenceModuleFields on ReferenceModule {
               for (let i = 0; i < p.metadata.media.length; i++) {
                 let m = p.metadata.media[i]
                 if (m.original) {
-
                   if (m.original.url) {
                     if (m.original.mimeType == "image/jpeg" || m.original.mimeType == "image/gif" || m.original.mimeType == "image/png") {
                       let img = document.createElement('img')
@@ -883,7 +882,8 @@ fragment ReferenceModuleFields on ReferenceModule {
                       video.style.width = '100%'
                       card.append(video)
                       post = true
-                    } else if (m.original.mimeType == "audio/mpeg") {
+                      i++
+                    } else if (m.original.mimeType == "audio/mpeg" || m.original.mimeType == "audio/wav") {
                       let audio = document.createElement('audio')
                       audio.controls = 'true'
                       audio.preload = 'auto'
@@ -962,7 +962,8 @@ fragment ReferenceModuleFields on ReferenceModule {
                         video.style.width = '100%'
                         card.append(video)
                         post = true
-                      } else if (m.original.mimeType == "audio/mpeg") {
+                        i++
+                      } else if (m.original.mimeType == "audio/mpeg" || m.original.mimeType == "audio/wav") {
                         let audio = document.createElement('audio')
                         audio.controls = 'true'
                         audio.preload = 'auto'
