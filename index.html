@@ -568,7 +568,7 @@ fragment ReferenceModuleFields on ReferenceModule {
     if (id == '0xf91a') {
       query = query1 + query3
     } else {
-      query2 + query3
+      query = query2 + query3
     }
     let res = await fetchPost(url, { query: query })
     let publications = false
