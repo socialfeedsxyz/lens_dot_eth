@@ -138,18 +138,29 @@
 <script type="text/javascript">
   async function init() {
     let domain = window.location.host
+    let full = window.location.href
+    let user = false
+    let address = false
+    let profile = false
+    if (full.includes('?')) {
+      user = full.split('?')[1]
+    }
     if (domain.endsWith('.eth.limo')) {
       domain = domain.split('.eth.limo')[0] + '.eth'
     } else if (domain.endsWith('.eth.link')) {
       domain = domain.split('.eth.link')[0] + '.eth'
     } else {
-      // domain = 'vitalik.eth'
+      domain = 'vitalik.eth'
       // domain = 'bradorbradley.eth'
-      domain = 'mrswe.eth'
+      // domain = 'mrswe.eth'
+    }
+    if (!user) {
+      address = await getAddress(domain)
+      profile = await getProfile('address', address)
+    } else {
+      profile = await getProfile('user', user)
     }
 
-    let address = await getAddress(domain)
-    let profile = await getProfile(address)
     if (profile) {
       showProfile(profile)
       if (profile.id) {
@@ -571,10 +582,10 @@ fragment ReferenceModuleFields on ReferenceModule {
     return publications
   }
 
-  function getQuery(address) {
+  function getQuery(method, address) {
 
     const query1 = `query Profiles {
-          profiles(request: { ownedBy: ["${address}"], limit: 10 }) {
+          profiles(request: { ${method == 'address' ? 'ownedBy' : 'handles'}: ["${address}"], limit: 10 }) {
             items {
               id
               name
@@ -681,10 +692,10 @@ fragment ReferenceModuleFields on ReferenceModule {
         }`
     return { query: query1 }
   }
-  async function getProfile(address) {
+  async function getProfile(method, address) {
     try {
       const url = 'https://api.lens.dev/'
-      const data = getQuery(address)
+      const data = getQuery(method, address)
       const response = await fetchPost(url, data)
       var res = false
       if (response) {
@@ -816,30 +827,38 @@ fragment ReferenceModuleFields on ReferenceModule {
             pr = p.profile
           }
           if (pr) {
-            if (pr.picture) {
-              if (pr.picture.original) {
-                if (pr.picture.original.url) {
-                  let img = document.createElement(`img`)
-                  img.src = ipfsUrl(pr.picture.original.url)
-                  img.classList.add('rounded-circle')
-                  img.classList.add('mx-auto')
-                  img.classList.add('mt-3')
-                  img.style.width = "60px"
-                  img.style.height = "60px"
-                  card.append(img)
+            if (pr.handle) {
+              let a = document.createElement('a')
+              a.href = '?' + pr.handle
+              a.style.display = 'flex'
+              a.style['flex-direction'] = 'column'
+              if (pr.picture) {
+                if (pr.picture.original) {
+                  if (pr.picture.original.url) {
+                    let img = document.createElement(`img`)
+                    img.src = ipfsUrl(pr.picture.original.url)
+                    img.classList.add('rounded-circle')
+                    img.classList.add('mx-auto')
+                    img.classList.add('mt-3')
+                    img.style.width = "60px"
+                    img.style.height = "60px"
+                    a.append(img)
+                  }
                 }
               }
+              if (pr.name) {
+                let strong = document.createElement('strong')
+                strong.innerText = pr.name
+                a.append(strong)
+              }
+              if (pr.handle) {
+                let span = document.createElement('span')
+                span.innerText = pr.handle
+                a.append(span)
+              }
+              card.append(a)
             }
-            if (pr.name) {
-              let strong = document.createElement('strong')
-              strong.innerText = pr.name
-              card.append(strong)
-            }
-            if (pr.handle) {
-              let span = document.createElement('span')
-              span.innerText = pr.handle
-              card.append(span)
-            }
+
           }
           if (p.mirrorOf && p.profile) {
             if (p.mirrorOf.profile && p.profile.handle) {
@@ -908,31 +927,41 @@ fragment ReferenceModuleFields on ReferenceModule {
             card.append(hr)
             card.append(small)
             let pr = p.mainPost.profile
+
             if (pr) {
-              if (pr.picture) {
-                if (pr.picture.original) {
-                  if (pr.picture.original.url) {
-                    let img = document.createElement(`img`)
-                    img.src = ipfsUrl(pr.picture.original.url)
-                    img.classList.add('rounded-circle')
-                    img.classList.add('mx-auto')
-                    img.classList.add('mt-1')
-                    img.style.width = "60px"
-                    img.style.height = "60px"
-                    card.append(img)
+              if (pr.handle) {
+                let a = document.createElement('a')
+                a.href = '?' + pr.handle
+                a.style.display = 'flex'
+                a.style['flex-direction'] = 'column'
+                if (pr.picture) {
+                  if (pr.picture.original) {
+                    if (pr.picture.original.url) {
+                      let img = document.createElement(`img`)
+                      img.src = ipfsUrl(pr.picture.original.url)
+                      img.classList.add('rounded-circle')
+                      img.classList.add('mx-auto')
+                      img.classList.add('mt-3')
+                      img.style.width = "60px"
+                      img.style.height = "60px"
+                      a.append(img)
+                    }
                   }
                 }
+                if (pr.name) {
+                  let strong = document.createElement('strong')
+                  strong.innerText = pr.name
+                  a.append(strong)
+                }
+                if (pr.handle) {
+                  let span = document.createElement('span')
+                  span.innerText = pr.handle
+                  a.append(span)
+                }
+                card.append(a)
               }
-              if (pr.name) {
-                let strong = document.createElement('strong')
-                strong.innerText = pr.name
-                card.append(strong)
-              }
-              if (pr.handle) {
-                let span = document.createElement('span')
-                span.innerText = pr.handle
-                card.append(span)
-              }
+
+
             }
             if (p.mainPost.metadata) {
               if (p.mainPost.metadata.content) {
