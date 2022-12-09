@@ -207,10 +207,13 @@
     return address
   }
   async function getPublications(id, next) {
-
-    let query = `query Publications {
+    let query1 = `query ExplorePublications {
+        explorePublications(request: {
+          sortCriteria: TOP_COMMENTED,`
+    let query2 = `query Publications {
   publications(request: {
-    profileId: "${id}",
+    profileId: "${id}",`
+    let query3 = `
     publicationTypes: [POST, COMMENT, MIRROR],
     limit: 10,${next ? ` cursor: \"${next}\"` : ''}
   }) {
@@ -561,6 +564,12 @@ fragment ReferenceModuleFields on ReferenceModule {
   }
 }`
     let url = 'https://api.lens.dev'
+    let query;
+    if (id == '0xf91a') {
+      query = query1 + query3
+    } else {
+      query2 + query3
+    }
     let res = await fetchPost(url, { query: query })
     let publications = false
 
@@ -568,6 +577,16 @@ fragment ReferenceModuleFields on ReferenceModule {
       if (res.data) {
         if (res.data.publications) {
           publications = res.data.publications
+          if (res.data.pageInfo) {
+            if (!res.data.pageInfo.next) {
+              localStorage.setItem('next', 'done')
+            } else {
+              localStorage.removeItem('next')
+            }
+          }
+
+        } else if (res.data.explorePublications) {
+          publications = res.data.explorePublications
           if (res.data.pageInfo) {
             if (!res.data.pageInfo.next) {
               localStorage.setItem('next', 'done')
