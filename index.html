@@ -209,7 +209,7 @@
   async function getPublications(id, next) {
     let query1 = `query ExplorePublications {
         explorePublications(request: {
-          sortCriteria: TOP_COMMENTED,`
+          sortCriteria: CURATED_PROFILES,`
     let query2 = `query Publications {
   publications(request: {
     profileId: "${id}",`
@@ -565,6 +565,7 @@ fragment ReferenceModuleFields on ReferenceModule {
 }`
     let url = 'https://api.lens.dev'
     let query;
+    // if (false) {
     if (id == '0xf91a') {
       query = query1 + query3
     } else {
